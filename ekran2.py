@@ -3,9 +3,9 @@ import os
 import sys
 
 # Ayarlar
-os.environ['SDL_AUDIODRIVER'] = 'dummy'
-os.environ["SDL_VIDEODRIVER"] = "kmsdrm" # HDMI için en kararlısı
-kla
+os.environ["SDL_VIDEODRIVER"] = "kmsdrm"
+os.environ["SDL_VIDEO_EGL_DRIVER"] = "libEGL.so" # EGL kütüphanesini doğrudan göster
+
 pygame.display.init()
 pygame.font.init()
 

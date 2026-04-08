@@ -1,1 +1,2 @@
-sudo apt-get install libsdl2-2.0-0 libsdl2-image-2.0-0 libsdl2-mixer-2.0-0 libsdl2-ttf-2.0-0 libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev -y
+sudo apt-get update
+sudo apt-get install --reinstall libgles2-mesa libegl1-mesa libgbm1 xserver-xorg-video-all -y

@@ -3,43 +3,38 @@ import sys
 import pygame
 import time
 
-# 1. Önce her şeyi temizleyelim
-os.environ.pop("SDL_VIDEODRIVER", None)
+# Sürücü zaten kmsdrm olarak onaylandı, direkt onu kullanalım
+os.environ["SDL_VIDEODRIVER"] = "kmsdrm"
+os.environ["SDL_VIDEO_KMSDRM_CRTCID"] = "1"
+os.environ["SDL_VIDEO_KMSDRM_CONNECTORID"] = "1"
 
-# 2. Pi Zero W / Lite için en garantili sürücü sıralaması
-drivers = ['kmsdrm', 'fbcon', 'directfb']
+pygame.init() # SADECE display değil, HER ŞEYİ (font dahil) başlatır
+pygame.font.init() # Garantici olalım
 
-found_driver = False
-for driver in drivers:
-    try:
-        os.environ["SDL_VIDEODRIVER"] = driver
-        pygame.display.init()
-        print(f"Basarili surucu: {driver}")
-        found_driver = True
-        break
-    except pygame.error:
-        continue
+# Ekranı oluştur
+width, height = 1024, 768
+try:
+    screen = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
+except pygame.error:
+    # Eğer Fullscreen hata verirse normal modda dene
+    screen = pygame.display.set_mode((width, height))
 
-if not found_driver:
-    print("Hicbir video surucusu calismadi!")
-    sys.exit()
-
-# 3. Ekranı oluştur (VGA dostu 1024x768)
-screen = pygame.display.set_mode((1024, 768), pygame.FULLSCREEN)
+# Font ayarı (None varsayılan fontu kullanır)
 font = pygame.font.SysFont(None, 80)
 
-# 4. Döngü
+print("KIRMIZI EKRAN GELIYOR...")
+
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
             running = False
 
-    # PARLAK MAVİ yapalım (Siyah ve Kırmızıdan farklı olsun, çalıştığını anlayalım)
-    screen.fill((0, 0, 255)) 
+    # Ekranı PARLAK KIRMIZI yap
+    screen.fill((255, 0, 0))
     
-    yazi = font.render("EKRAN CALISIYOR!", True, (255, 255, 255))
-    screen.blit(yazi, (200, 300))
+    yazi = font.render("SISTEM CALISIYOR", True, (255, 255, 255))
+    screen.blit(yazi, (width // 6, height // 2))
     
     pygame.display.flip()
     time.sleep(0.1)

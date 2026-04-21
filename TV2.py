@@ -1,39 +1,47 @@
-import pygame
 import os
+import sys
+import pygame
 import time
 
-# TÜM SÜRÜCÜ ZORLAMALARINI KALDIRDIK
-# Pygame, config.txt'deki ayara göre en uygununu kendisi seçecek.
+# 1. Önce her şeyi temizleyelim
+os.environ.pop("SDL_VIDEODRIVER", None)
 
-pygame.display.init()
-pygame.font.init()
+# 2. Pi Zero W / Lite için en garantili sürücü sıralaması
+drivers = ['kmsdrm', 'fbcon', 'directfb']
 
-# Çözünürlüğü VGA için standart yapalım
-width, height = 1024, 768
-screen = pygame.display.set_mode((width, height))
+found_driver = False
+for driver in drivers:
+    try:
+        os.environ["SDL_VIDEODRIVER"] = driver
+        pygame.display.init()
+        print(f"Basarili surucu: {driver}")
+        found_driver = True
+        break
+    except pygame.error:
+        continue
 
+if not found_driver:
+    print("Hicbir video surucusu calismadi!")
+    sys.exit()
+
+# 3. Ekranı oluştur (VGA dostu 1024x768)
+screen = pygame.display.set_mode((1024, 768), pygame.FULLSCREEN)
 font = pygame.font.SysFont(None, 80)
 
+# 4. Döngü
 running = True
-clock = pygame.time.Clock()
-
-print("Program basliyor... Ekranda kirmizi gormeyi bekliyoruz.")
-
 while running:
     for event in pygame.event.get():
-        if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+        if event.type == pygame.KEYDOWN:
             running = False
 
-    # Test için ekranı KIRMIZI yap
-    screen.fill((255, 0, 0))
-
-    yazi1 = font.render("SISTEM AKTIF", True, (255, 255, 255))
-    yazi2 = font.render(f"Saat: {time.strftime('%H:%M:%S')}", True, (255, 255, 0))
-
-    screen.blit(yazi1, (width // 6, height // 3))
-    screen.blit(yazi2, (width // 6, height // 2))
-
-    pygame.display.flip() 
-    clock.tick(20) # Pi Zero için 20 FPS daha az yorucu olur
+    # PARLAK MAVİ yapalım (Siyah ve Kırmızıdan farklı olsun, çalıştığını anlayalım)
+    screen.fill((0, 0, 255)) 
+    
+    yazi = font.render("EKRAN CALISIYOR!", True, (255, 255, 255))
+    screen.blit(yazi, (200, 300))
+    
+    pygame.display.flip()
+    time.sleep(0.1)
 
 pygame.quit()
